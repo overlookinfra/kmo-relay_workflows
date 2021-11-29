@@ -2,10 +2,7 @@ echo "Running github curl script"
 
 echo "Running ni get test"
 
-ni log info
-ni get -p '{secrets.learndot}'
-
-TOKEN="${TrainingRocket-Authorization: $(ni get -p '{.learndot}')}"
+TOKEN="TrainingRocket-Authorization: $ACCESS_TOKEN"
 
 curl -H 'content-type: application/json' \
 -H 'Accept: application/json' \
