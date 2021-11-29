@@ -22,6 +22,8 @@ https://learn.puppet.com/api/rest/v2/manage/course_event/search \
 if [ -z "$RESPONSE" ]
 then
     echo "No results in response: $RESPONSE"
+    echo "Setting result flag to FALSE"
+    ni output set -k results_flag -v "FALSE"
 else
     echo "response data was: $RESPONSE"
     echo "setting response output value with ni"
