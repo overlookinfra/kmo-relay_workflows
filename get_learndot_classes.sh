@@ -10,5 +10,6 @@ https://learn.puppet.com/api/rest/v2/manage/course_event/search \
 | jq -r '.results[] | "\(._displayName_) | \(.id)"')
 
 
+echo "response data was: $RESPONSE"
 echo "setting response output value with ni"
-ni output set -k response -v $RESPONSE
+ni output set -k response -v "$RESPONSE"
