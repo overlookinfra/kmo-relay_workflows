@@ -21,13 +21,13 @@ https://learn.puppet.com/api/rest/v2/manage/course_event/search \
 
 if [ -z "$RESPONSE" ]
 then
+    echo "No results in response: $RESPONSE"
+else
     echo "response data was: $RESPONSE"
     echo "setting response output value with ni"
     ni output set -k response -v "$RESPONSE"
     echo "setting conditional flag to TRUE"
     ni output set -k results_flag -v "TRUE"
-else
-    echo "No results in response: $RESPONSE"
 fi
 
 
