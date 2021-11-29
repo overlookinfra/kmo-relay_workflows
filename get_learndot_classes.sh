@@ -19,7 +19,7 @@ https://learn.puppet.com/api/rest/v2/manage/course_event/search \
 
 
 
-if [ $RESPONSE ]
+if [ -z "$RESPONSE" ]
 then
     echo "response data was: $RESPONSE"
     echo "setting response output value with ni"
