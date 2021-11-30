@@ -6,14 +6,14 @@ TOKEN="TrainingRocket-Authorization: $ACCESS_TOKEN"
 curl -H 'content-type: application/json' \
 -H 'Accept: application/json' \
 -H "$TOKEN" \
--d "{ \"startTime\" : [\"$START_DATE\", \"$END_DATE\"] }" \
+-d "{ \"startTime\" : [\"$START_DATE 00:01:00\", \"$END_DATE 23:59:59\"] }" \
 https://learn.puppet.com/api/rest/v2/manage/course_event/search \
 | jq -r '.results[] | "\(._displayName_) | \(.id)"'
 
 RESPONSE=$(curl -H 'content-type: application/json' \
 -H 'Accept: application/json' \
 -H "$TOKEN" \
--d "{ \"startTime\" : [\"$START_DATE\", \"$END_DATE\"] }" \
+-d "{ \"startTime\" : [\"$START_DATE 00:01:00\", \"$END_DATE 23:59:59\"] }" \
 https://learn.puppet.com/api/rest/v2/manage/course_event/search \
 | jq -r '.results[] | "\(._displayName_) | \(.id)"')
 
