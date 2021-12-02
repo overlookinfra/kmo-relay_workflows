@@ -30,7 +30,6 @@ else
     ni output set -k response -v "$RESPONSE"
     echo "setting conditional flag to TRUE"
     ni output set -k results_flag -v "TRUE"
-    curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$RESPONSE\"}" https://hooks.slack.com/services/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
 fi
 
 
