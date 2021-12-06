@@ -8,16 +8,25 @@ curl -H 'content-type: application/json' \
 -H "$TOKEN" \
 -d "{ \"startTime\" : [\"$START_DATE 00:01:00\", \"$END_DATE 23:59:59\"] }" \
 https://learn.puppet.com/api/rest/v2/manage/course_event/search \
-| jq -r '.results[] | "\(._displayName_) | \(.id)"'
+| jq -r '.results[] | select(.status == "CONFIRMED") | "\(._displayName_) | \(.id)"'
 
-RESPONSE=$(curl -H 'content-type: application/json' \
+CURLOUTPUT=$(curl -H 'content-type: application/json' \
 -H 'Accept: application/json' \
 -H "$TOKEN" \
 -d "{ \"startTime\" : [\"$START_DATE 00:01:00\", \"$END_DATE 23:59:59\"] }" \
 https://learn.puppet.com/api/rest/v2/manage/course_event/search \
-| jq -r '.results[] | "\(._displayName_) | \(.id)"')
+| jq -r '.results[] | select(.status == "CONFIRMED") | "\(._displayName_) | \(.id)"')
 
-
+RESPONSE=`echo "$CURLOUTPUT" | while IFS= read -r line 
+do 
+    login_check=$(echo $line | awk -F "|" '{print $2}' | xargs -n 1 -I {} curl -sL https://class\{\}.classroom.puppet.com/ | grep "<title>");
+    if [[ $login_check == *"Puppet"* ]] 
+    then 
+        echo "$line | Login Page Response: 200 ok";
+    else 
+        echo "$line | Login page not found!!!! - Possible Hydra Failure!";
+    fi
+done `
 
 if [ -z "$RESPONSE" ]
 then
