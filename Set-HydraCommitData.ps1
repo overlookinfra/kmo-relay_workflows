@@ -13,7 +13,7 @@ foreach ($event in $eventListString) {
 
 $eventListObjects = $eventListString | ConvertFrom-Json
 
-foreach ($event in $eventListObjects) {
+foreach ($eventObject in $eventListObjects) {
     Write-Output "Event object list:"
-    Write-Output $event
+    Write-Output $eventObject
 }
