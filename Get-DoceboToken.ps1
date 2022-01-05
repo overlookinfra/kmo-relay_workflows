@@ -14,7 +14,7 @@ $uri = "https://training.puppet.com/oauth2/token"
 
 Write-Output "Using Docebo URI: $($uri)"
 
-$getTokenResponse = Invoke-WebRequest -Uri $uri -Method Post -Form $form
+$getTokenResponse = Invoke-RestMethod -Uri $uri -Method Post -Form $form
 
 Write-Output "Setting access token output value"
 
