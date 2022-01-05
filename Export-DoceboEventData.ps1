@@ -44,4 +44,4 @@ $eventListJson = $eventList | ConvertTo-Json
 
 Write-Output $eventListJson
 
-Relay-Interface output set -k EventListExport -v $eventListJson --json
+Relay-Interface output set -k EventListExport -v $eventListJson
