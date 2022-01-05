@@ -1,6 +1,6 @@
 Write-Output "Fetching event list export"
 
-$eventList = (Relay-Interface get -p '{outputs.Export-Docebo-Events.EventListExport}')
+$eventList = (Relay-Interface get -p '{.Export-Docebo-Events.EventListExport}')
 
 Write-Output $eventList 
 
