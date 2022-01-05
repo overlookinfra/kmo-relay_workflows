@@ -40,8 +40,4 @@ $eventList+=$newEventB
 
 Write-Output $eventList
 
-$eventListJson = $eventList | ConvertTo-Json
-
-Write-Output $eventListJson
-
-Relay-Interface output set -k EventListExport -v $eventListJson
+Relay-Interface output set -k EventListExport -v $eventList
