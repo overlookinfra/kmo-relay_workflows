@@ -1,7 +1,11 @@
-Write-Output "Fetching event list export"
+Write-Output "Fetching event list export string"
 
-$eventList = (Relay-Interface get -p '{.EventListData}')
+$eventListString = (Relay-Interface get -p '{.EventListData}')
 
-Write-Output $eventList 
+Write-Output "converting eventListString to JSON"
 
-Write-Output "eventList is type $eventList.GetType()"
+$eventListJson = $eventListString | ConvertTo-Json
+
+foreach ($event in $eventListJson) {
+    Write-Output $event
+}
