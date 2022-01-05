@@ -6,10 +6,7 @@ Write-Output "eventListString:"
 
 Write-Output $eventListString
 
-Write-Output "converting eventListString to JSON"
-
-$eventListJson = $eventListString | ConvertTo-Json
-
-foreach ($event in $eventListJson) {
+foreach ($event in $eventListString) {
+    Write-Output "Checking for event item:"
     Write-Output $event
 }
