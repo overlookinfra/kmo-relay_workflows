@@ -18,4 +18,4 @@ $getTokenResponse = Invoke-WebRequest -Uri $uri -Method Post -Form $form
 
 Write-Output "Setting access token output value"
 
-Relay-Interface ouput set -k DoceboToken -v $($getTokenResponse.access_token)
+Relay-Interface output set -k DoceboToken -v $($getTokenResponse.access_token)
