@@ -37,6 +37,11 @@ Set-Location courseware-lms-nextgen-hydra
 
 git checkout -b "aw-test-gswp" 
 
+Write-Output "Creating manifest template file"
 $manifestTemplate >> manifest.yaml
+
+Get-ChildItem .
+
+Get-Content manifest.yaml
 
 git status
