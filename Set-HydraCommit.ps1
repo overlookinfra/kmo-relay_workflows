@@ -40,8 +40,10 @@ git checkout -b "aw-test-gswp"
 Write-Output "Creating manifest template file"
 $manifestTemplate >> manifest.yaml
 
-Get-ChildItem .
-
-Get-Content manifest.yaml
+git add --all
 
 git status
+
+git commit -m "Provision environment from Relay"
+
+git push origin "aw-test-gswp"
