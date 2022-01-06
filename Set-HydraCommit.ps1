@@ -33,7 +33,7 @@ git clone "https://puppetlabs-edu-api:$($env:GithubPAT)@github.com/puppetlabs/co
 
 Set-Location courseware-lms-nextgen-hydra
 
-git checkout -b aw-test-gswp 
+git checkout -b "aw-test-gswp" 
 
 $manifestTemplate | Out-File manifest.yaml
 
