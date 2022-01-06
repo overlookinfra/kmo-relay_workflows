@@ -15,7 +15,7 @@ Write-Output $filteredList
 Write-Output "Printing directory"
 Get-Location
 
-$manifestTemplate = @'
+$manifestTemplate = @"
 ---
 stack: legacyclass
 tf_action: apply
@@ -27,7 +27,7 @@ department: EDU
 tf_parameters:
   puppet_class_type: GSWP
   student_machine_count: '3'
-'@
+"@
 
 Write-Output $manifestTemplate
 
@@ -36,5 +36,7 @@ git clone "https://puppetlabs-edu-api:$($env:GithubPAT)@github.com/puppetlabs/co
 Set-Location courseware-lms-nextgen-hydra
 
 git checkout -b "aw-test-gswp" 
+
+$manifestTemplate >> manifest.yaml
 
 git status
