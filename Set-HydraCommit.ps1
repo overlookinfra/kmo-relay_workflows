@@ -1,4 +1,4 @@
-<# Write-Output "Getting Docebo data:"
+Write-Output "Getting Docebo data:"
 $jsonList = (Relay-Interface get -p '{.EventListData}')
 
 $data = $jsonList | ConvertFrom-Json
@@ -42,6 +42,6 @@ $newEventB = [PSCustomObject]@{
     tf_parameters = $tfParamsB
 }
 
-$eventList+=$newEventB #>
+$eventList+=$newEventB
 
 Write-Output "Debug logging"
