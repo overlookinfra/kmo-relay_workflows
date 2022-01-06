@@ -29,16 +29,12 @@ tf_parameters:
   student_machine_count: '3'
 '@
 
+Write-Output $manifestTemplate
+
 git clone "https://puppetlabs-edu-api:$($env:GithubPAT)@github.com/puppetlabs/courseware-lms-nextgen-hydra.git"
 
 Set-Location courseware-lms-nextgen-hydra
 
 git checkout -b "aw-test-gswp" 
-
-$manifestTemplate | Out-File manifest.yaml
-
-Get-Contents manifest.yaml
-
-git add --all
 
 git status
