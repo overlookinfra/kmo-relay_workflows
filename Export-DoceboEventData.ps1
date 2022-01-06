@@ -9,7 +9,7 @@ $headers = @{
 
 $response = Invoke-RestMethod -Uri $uri -Headers $headers -Method Get
 
-Write-Output "Returned unfiltered data $($response)"
+Write-Output "Returned unfiltered data $($response.data.items)"
 
 $filteredList = $response.data.items | Where-Object {$_.last_update -lt "2021-11-15 00:00:00"}
 
