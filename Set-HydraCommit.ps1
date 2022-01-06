@@ -31,6 +31,9 @@ tf_parameters:
 
 Write-Output $manifestTemplate
 
+git config --global user.email "eduteam@puppetlabs.com"
+git config --global user.name "puppetlabs-edu-api"
+
 git clone "https://puppetlabs-edu-api:$($env:GithubPAT)@github.com/puppetlabs/courseware-lms-nextgen-hydra.git"
 
 Set-Location courseware-lms-nextgen-hydra
