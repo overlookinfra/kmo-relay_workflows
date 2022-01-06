@@ -1,43 +1,21 @@
-# Mock data structure export
-
-$eventList = @()
-
-$tfParamsA = @{
-    puppet_class_type = 'GSWP'
-    student_machine_count = '3'
+# Get some mock data from Docebo
+Write-Output "Getting data from Docebo:"
+$uri = "https://training.puppet.com/course/v1/courses"
+Write-Output "Using uri: $($uri)"
+Write-Output "Setting up auth header"
+$headers = @{
+    Authorization = "Bearer $($env:DoceboToken)"
 }
 
-$newEventA = [PSCustomObject]@{
-    stack = 'legacyclass'
-    tf_action = 'apply'
-    owner = 'Relay-Hydra-Integration'
-    owner_email = 'alex.williamson@puppet.com'
-    region = 'us-east-1'
-    days_needed = '1'
-    department = 'EDU'
-    tf_parameters = $tfParamsA
-}
+$response = Invoke-RestMethod -Uri $uri -Headers $headers -Method Get
 
-$eventList+=$newEventA
+Write-Output "Returned unfiltered data $($response)"
 
-$tfParamsB = @{
-    puppet_class_type = 'GSWP'
-    student_machine_count = '3'
-}
+$filteredList = $response.data.items | Where-Object {$_.last_update -lt "2021-11-15 00:00:00"}
 
-$newEventB = [PSCustomObject]@{
-    stack = 'legacyclass'
-    tf_action = 'apply'
-    owner = 'Relay-Hydra-Integration'
-    owner_email = 'alex.williamson@puppet.com'
-    region = 'us-east-1'
-    days_needed = '1'
-    department = 'EDU'
-    tf_parameters = $tfParamsB
-}
+$jsonList = $filteredList | ConvertTo-Json
 
-$eventList+=$newEventB
+Write-Output "Filtered json data:"
+Write-Output "$($jsonList)"
 
-Write-Output $eventList
-
-Relay-Interface output set -k EventListExport -v $eventList
+Relay-Interface output set -k EventListExport -v $jsonList

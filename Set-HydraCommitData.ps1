@@ -1,19 +1,45 @@
-Write-Output "Fetching event list export string"
+Write-Output "Getting Docebo data:"
+$jsonList = (Relay-Interface get -p '{.EventListData}')
 
-$eventListString = (Relay-Interface get -p '{.EventListData}')
+$data = $jsonList | ConvertFrom-Json
 
-Write-Output "eventListString:"
+Write-Output "Converted back to PSobject list:"
+Write-Output "$($data)"
 
-Write-Output $eventListString
+$eventList = @()
 
-foreach ($event in $eventListString) {
-    Write-Output "Checking for event item:"
-    Write-Output $event
+$tfParamsA = @{
+    puppet_class_type = 'GSWP'
+    student_machine_count = '3'
 }
 
-$eventListObjects = $eventListString | ConvertFrom-Json
-
-foreach ($eventObject in $eventListObjects) {
-    Write-Output "Event object list:"
-    Write-Output $eventObject
+$newEventA = [PSCustomObject]@{
+    stack = 'legacyclass'
+    tf_action = 'apply'
+    owner = 'Relay-Hydra-Integration'
+    owner_email = 'alex.williamson@puppet.com'
+    region = 'us-east-1'
+    days_needed = '1'
+    department = 'EDU'
+    tf_parameters = $tfParamsA
 }
+
+$eventList+=$newEventA
+
+$tfParamsB = @{
+    puppet_class_type = 'GSWP'
+    student_machine_count = '3'
+}
+
+$newEventB = [PSCustomObject]@{
+    stack = 'legacyclass'
+    tf_action = 'apply'
+    owner = 'Relay-Hydra-Integration'
+    owner_email = 'alex.williamson@puppet.com'
+    region = 'us-east-1'
+    days_needed = '1'
+    department = 'EDU'
+    tf_parameters = $tfParamsB
+}
+
+$eventList+=$newEventB
