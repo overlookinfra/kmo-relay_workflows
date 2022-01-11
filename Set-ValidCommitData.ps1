@@ -95,10 +95,10 @@ function Set-HydraCommits {
         $branchID = "R2H-$($session.uid_session)"
         Write-Information "Working on session item $($session.name)"
         Write-Information "Creating branch: $branchID"
-        git checkout -b $branchID
+        (git checkout -b $branchID) | Out-Null
         Write-Information "Adding manifest template"
         $manifestTemplate >> manifest.yaml
-        git status
+        (git status) | Out-Null
         Write-Information "Adjusting manifest file values:"
 
         $classType = switch -Wildcard ($($session.name)) {
@@ -121,10 +121,9 @@ function Set-HydraCommits {
 
         Write-Information "Adjusted manifest.yaml data:"
         $adjustedManifest = Get-Content manifest.yaml
-        Write-Information $($adjustedManifest)
+        Write-Information $adjustedManifest
 
-        git add --all
-        git status
+        (git add --all) | Out-Null
         # git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.uid_session)"
         # git push origin $branchID --porcelain
         # Write-Information "git output: $($gitOutput)"
@@ -137,7 +136,6 @@ function Set-HydraCommits {
 
     }
     return $workLog
-
 }
 
 $manifestTemplate = @"
@@ -168,11 +166,11 @@ git clone "https://puppetlabs-edu-api:$($env:GithubPAT)@github.com/puppetlabs/co
 Write-Output "Setting working directory to hydra repo"
 Set-Location courseware-lms-nextgen-hydra
 
-$workLog = Set-HydraCommits -SessionList $list -InformationAction Continue
+$outputLog = Set-HydraCommits -SessionList $list -InformationAction Continue
 
-$workLog | Format-Table -Property id, uid_session, HydraBranch
+$outputLog | Format-Table -Property id, uid_session, HydraBranch
 Write-Output "Printing table"
-$outputTable = $workLog | Format-Table -Property id, uid_session, HydraBranch| Out-String
+$outputTable = $outputLog | Format-Table -Property id, uid_session, HydraBranch| Out-String
 Write-Output $outputTable
 
 Relay-Interface output set -k WorkLog -v $outputTable
