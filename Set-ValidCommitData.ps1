@@ -120,7 +120,7 @@ function Set-HydraCommits {
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
 
         Write-Information "Adjusted manifest.yaml data:"
-        $adjustedManifest = Get-Content manifest.yaml
+        $adjustedManifest = Get-Content manifest.yaml -Raw
         Write-Information $adjustedManifest
 
         (git add --all) | Out-Null
@@ -170,7 +170,7 @@ $outputLog = Set-HydraCommits -SessionList $list -InformationAction Continue
 
 $outputLog | Format-Table -Property id, uid_session, HydraBranch
 Write-Output "Printing table"
-$outputTable = $outputLog | Format-Table -Property id, uid_session, HydraBranch| Out-String
+$outputTable = $outputLog | Format-Table -Property id, uid_session, HydraBranch -AutoSize| Out-String
 Write-Output $outputTable
 
 Relay-Interface output set -k WorkLog -v $outputTable
