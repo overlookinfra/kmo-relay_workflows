@@ -62,19 +62,7 @@ function Set-HydraCommits {
         [String]
         $GithubPAT
     )
-    $manifestTemplate = @"
-    ---
-    stack: <CLASSTYPE>
-    tf_action: apply
-    owner: puppetlabs-edu-api
-    owner_email: eduteam@puppetlabs.com
-    region: us-east-1
-    days_needed: 7
-    department: EDU
-    tf_parameters:
-      <LEGACY_CLASS_ID>
-      student_machine_count: '<STUDENTCOUNT>'
-"@
+
     $workArray = @()
     foreach ($session in $SessionList) {
         $branchID = "R2H-$($session.uid_session)"
@@ -117,6 +105,20 @@ function Set-HydraCommits {
     return $workLog
 
 }
+
+$manifestTemplate = @"
+---
+stack: <CLASSTYPE>
+tf_action: apply
+owner: puppetlabs-edu-api
+owner_email: eduteam@puppetlabs.com
+region: us-east-1
+days_needed: 7
+department: EDU
+tf_parameters:
+    <LEGACY_CLASS_ID>
+    student_machine_count: '<STUDENTCOUNT>'
+"@
 
 $list = Get-ValidSessions -AuthToken $env:DoceboToken -InformationAction Continue
 
