@@ -171,4 +171,4 @@ Set-Location courseware-lms-nextgen-hydra
 $workLog = Set-HydraCommits -SessionList $list -InformationAction Continue
 $workLog | Format-Table 
 
-
+Relay-Interface output set -k WorkLog -v ($workLog | Format-Table)
