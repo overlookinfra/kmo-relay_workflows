@@ -169,7 +169,7 @@ Write-Output "Setting working directory to hydra repo"
 Set-Location courseware-lms-nextgen-hydra
 
 $workLog = Set-HydraCommits -SessionList $list -InformationAction Continue
-$workLog | Format-Table Format-Table -Property id, uid_session, HydraBranch
+$workLog | Format-Table -Property id, uid_session, HydraBranch
 $outputTable = $workLog | Format-Table -Property id, uid_session, HydraBranch| Out-String
 
 Relay-Interface output set -k WorkLog -v $outputTable
