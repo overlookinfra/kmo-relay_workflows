@@ -96,9 +96,9 @@ function Set-HydraCommits {
 
         git add --all
         git status
-        git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.udi_session)"
+        git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.uid_session)"
         $gitOutput = git push origin $branchID
-        Write-Information "git ouput: $($gitOutput)"
+        Write-Information "git output: $($gitOutput)"
         $workLog+=$session
 
     }
