@@ -68,7 +68,7 @@ function Set-HydraCommits {
         $branchID = "R2H-$($session.uid_session)"
         Write-Information "Working on session item $($session.name)"
         Write-Information "Creating branch: $branchID"
-        git checkout -b "R2H-$($session.uid_session)"
+        git checkout -b $branchID
         Write-Information "Adding manifest template"
         $manifestTemplate >> manifest.yaml
         git status
