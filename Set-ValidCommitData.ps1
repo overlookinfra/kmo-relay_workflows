@@ -86,8 +86,10 @@ function Set-HydraCommits {
             'Upgrade*' {''}
         }
 
+        $adjustedSeats = 4 + [Int]$session.enrolled
+
         ((Get-Content -path manifest.yaml -Raw) -replace '<CLASSTYPE>', $classType) | Set-Content -Path manifest.yaml
-        ((Get-Content -path manifest.yaml -Raw) -replace '<STUDENTCOUNT>', $($session.enrolled)) | Set-Content -Path manifest.yaml
+        ((Get-Content -path manifest.yaml -Raw) -replace '<STUDENTCOUNT>', $($adjustedSeats)) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
 
         Write-Information "Adjusted manifest.yaml data:"
