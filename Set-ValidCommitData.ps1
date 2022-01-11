@@ -120,7 +120,7 @@ function Set-HydraCommits {
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
 
         Write-Information "Adjusted manifest.yaml data:"
-        Get-Content manifest.yaml
+        Write-Information (Get-Content manifest.yaml)
 
 
         git add --all
