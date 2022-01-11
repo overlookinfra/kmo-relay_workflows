@@ -120,8 +120,8 @@ function Set-HydraCommits {
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
 
         Write-Information "Adjusted manifest.yaml data:"
-        Write-Information (Get-Content manifest.yaml)
-
+        $adjustedManifest = Get-Content manifest.yaml
+        Write-Information $($adjustedManifest)
 
         git add --all
         git status
@@ -169,7 +169,10 @@ Write-Output "Setting working directory to hydra repo"
 Set-Location courseware-lms-nextgen-hydra
 
 $workLog = Set-HydraCommits -SessionList $list -InformationAction Continue
+
 $workLog | Format-Table -Property id, uid_session, HydraBranch
+Write-Output "Printing table"
 $outputTable = $workLog | Format-Table -Property id, uid_session, HydraBranch| Out-String
+Write-Output $outputTable
 
 Relay-Interface output set -k WorkLog -v $outputTable
