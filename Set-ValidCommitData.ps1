@@ -52,6 +52,33 @@ function Get-ValidSessions {
     return $validSessions
 }
 
+function Set-SessionHydraCommitData {
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        [String]
+        $SessionID,
+        [Parameter()]
+        [String]
+        $CommitData,
+        [Parameter()]
+        [String]
+        $AuthToken
+        
+    )
+    $uri = "https://training.puppet.com/course/v1/sessions/$SessionID"
+    Write-Information "Setting up auth header"
+    $headers = @{Authorization = "Bearer $AuthToken"}
+    Write-Information "Attempting to get Session data for Session ID: $SessionID"
+    $sessionData = Invoke-RestMethod -Uri $uri -Headers $headers -Method Get
+    Write-Information "Got Session data for name: $($sessionData.data.name) and ID: $($sessionData.data.id)"
+    Write-Information "Updating session data with hydra commit ID"
+    $sessionData.data.additional_fields[0].value = "$($CommitData)"
+    $body = $sessionData | ConvertTo-Json -Depth 5
+    Invoke-RestMethod -Uri $uri -Headers $headers -Body $body -Method Put
+
+}
+
 function Set-HydraCommits {
     [CmdletBinding()]
     param (
@@ -93,14 +120,19 @@ function Set-HydraCommits {
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
 
         Write-Information "Adjusted manifest.yaml data:"
-        $manifestAdjusted = Get-Content manifest.yaml
-        Write-Information $manifestAdjusted
+        Get-Content manifest.yaml
+
 
         git add --all
         git status
         git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.uid_session)"
         $gitOutput = git push origin $branchID --porcelain
         Write-Information "git output: $($gitOutput)"
+
+        # Set-SessionHydraCommitData -SessionID $($session.id) -AuthToken $env:DoceboToken -CommitData $branchID
+
+        $session | Add-Member -MemberType NoteProperty -Name 'HydraBranch' -Value $branchID
+
         $workLog+=$session
 
     }
@@ -137,6 +169,6 @@ Write-Output "Setting working directory to hydra repo"
 Set-Location courseware-lms-nextgen-hydra
 
 $workLog = Set-HydraCommits -SessionList $list -InformationAction Continue
-Write-Output $workLog
+$workLog | Format-Table 
 
 
