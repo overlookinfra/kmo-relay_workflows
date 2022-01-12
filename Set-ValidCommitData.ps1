@@ -7,7 +7,7 @@ function Confirm-SessionDateWindow {
     )
 
     $currentDate = Get-Date
-    $forecastInterval = New-TimeSpan -Days 70
+    $forecastInterval = New-TimeSpan -Days 150
     $forecastDate = $currentDate + $forecastInterval
 
     if ($Date -ge $currentDate -and $Date -le $forecastDate) {
