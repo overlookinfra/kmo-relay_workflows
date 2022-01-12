@@ -1,3 +1,5 @@
+$global:workArray = @()
+
 function Confirm-SessionDateWindow {
     [CmdletBinding()]
     param (
@@ -90,19 +92,18 @@ function Set-HydraCommits {
         $GithubPAT
     )
 
-    $workArray = @()
     foreach ($session in $SessionList) {
         $branchID = "R2H-$($session.uid_session)"
         Write-Information "Working on session item $($session.name)"
         Write-Information "Creating branch: $branchID"
-        (git checkout -b $branchID) | Out-Null
+        git checkout -b $branchID 
         Write-Information "Removing manifest.yaml if it exists"
         if (Test-Path manifest.yaml) {
             Remove-Item manifest.yaml
         }
         Write-Information "Adding manifest template"
         $manifestTemplate >> manifest.yaml
-        (git status) | Out-Null
+        git status 
         Write-Information "Adjusting manifest file values:"
 
         $classType = switch -Wildcard ($($session.name)) {
@@ -127,19 +128,17 @@ function Set-HydraCommits {
         $adjustedManifest = Get-Content manifest.yaml -Raw
         Write-Information $adjustedManifest
 
-        (git add --all) | Out-Null
-        (git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.uid_session)") | Out-Null
-        (git push origin $branchID --porcelain) | Out-Null 
-        # Write-Information "git output: $($gitOutput)"
+        git add --all
+        git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.uid_session)"
+        git push origin $branchID
 
         # Set-SessionHydraCommitData -SessionID $($session.id) -AuthToken $env:DoceboToken -CommitData $branchID
 
         $session | Add-Member -MemberType NoteProperty -Name 'HydraBranch' -Value $branchID
 
-        $workLog+=$session
-
+        $global:workArray+=$session
     }
-    return $workLog
+
 }
 
 $manifestTemplate = @"
@@ -170,11 +169,11 @@ git clone "https://puppetlabs-edu-api:$($env:GithubPAT)@github.com/puppetlabs/co
 Write-Output "Setting working directory to hydra repo"
 Set-Location courseware-lms-nextgen-hydra
 
-$outputLog = Set-HydraCommits -SessionList $list -InformationAction Continue
+Set-HydraCommits -SessionList $list -InformationAction Continue
 
-$outputLog | Format-Table -Property name, id, uid_session, HydraBranch, date_start 
+$global:workArray  | Format-Table -Property name, id, uid_session, HydraBranch, date_start 
 Write-Output "Printing table"
-$outputTable = $outputLog | Format-Table -Property name, id, uid_session, HydraBranch, date_start  -AutoSize | Out-String
+$outputTable = $global:workArray | Format-Table -Property name, id, uid_session, HydraBranch, date_start  -AutoSize | Out-String
 Write-Output $outputTable
 
 $formatBlock = @"
