@@ -168,12 +168,13 @@ Set-Location courseware-lms-nextgen-hydra
 
 $outputLog = Set-HydraCommits -SessionList $list -InformationAction Continue
 
-$outputLog | Format-Table -Property id, uid_session, HydraBranch
+$outputLog | Format-Table -Property name, id, uid_session, HydraBranch, date_start 
 Write-Output "Printing table"
-$outputTable = $outputLog | Format-Table -Property id, uid_session, HydraBranch -AutoSize| Out-String
+$outputTable = $outputLog | Format-Table -Property name, id, uid_session, HydraBranch, date_start  -AutoSize | Out-String
 Write-Output $outputTable
 
 $formatBlock = @"
+Docebo Sessions sent to Hydra2:
 ``````
 $($outputTable)
 ``````
