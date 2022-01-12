@@ -124,8 +124,8 @@ function Set-HydraCommits {
         Write-Information $adjustedManifest
 
         (git add --all) | Out-Null
-        # git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.uid_session)"
-        # git push origin $branchID --porcelain
+        git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.uid_session)" | Out-Null
+        git push origin $branchID --porcelain | Out-Null 
         # Write-Information "git output: $($gitOutput)"
 
         # Set-SessionHydraCommitData -SessionID $($session.id) -AuthToken $env:DoceboToken -CommitData $branchID
