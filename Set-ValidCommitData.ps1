@@ -173,4 +173,10 @@ Write-Output "Printing table"
 $outputTable = $outputLog | Format-Table -Property id, uid_session, HydraBranch -AutoSize| Out-String
 Write-Output $outputTable
 
-Relay-Interface output set -k WorkLog -v $outputTable
+$formatBlock = @"
+``````
+$($outputTable)
+``````
+"@
+
+Relay-Interface output set -k WorkLog -v $formatBlock
