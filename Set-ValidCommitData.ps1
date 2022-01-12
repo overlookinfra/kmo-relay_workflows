@@ -96,6 +96,10 @@ function Set-HydraCommits {
         Write-Information "Working on session item $($session.name)"
         Write-Information "Creating branch: $branchID"
         (git checkout -b $branchID) | Out-Null
+        Write-Information "Removing manifest.yaml if it exists"
+        if (Test-Path manifest.yaml) {
+            Remove-Item manifest.yaml
+        }
         Write-Information "Adding manifest template"
         $manifestTemplate >> manifest.yaml
         (git status) | Out-Null
