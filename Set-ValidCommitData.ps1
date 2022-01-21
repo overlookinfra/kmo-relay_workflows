@@ -123,7 +123,7 @@ tf_parameters:
     student_machine_count: '<STUDENTCOUNT>'
 "@
 
-Get-ValidSessions -AuthToken $env:DoceboToken -InformationAction Continue
+Get-ValidSessions -AuthToken $env:DoceboToken 
 
 git config --global user.email "eduteam@puppetlabs.com"
 git config --global user.name "puppetlabs-edu-api"
@@ -137,7 +137,7 @@ git clone "https://puppetlabs-edu-api:$($env:GithubPAT)@github.com/puppetlabs/co
 Write-Output "Setting working directory to hydra repo"
 Set-Location courseware-lms-nextgen-hydra
 
-Set-HydraCommits -SessionList $global:validSessions -InformationAction Continue
+Set-HydraCommits -SessionList $global:validSessions 
 
 $global:workArray  | Format-Table -Property name, id, uid_session, HydraBranch, date_start 
 Write-Output "Printing table"
