@@ -1,4 +1,5 @@
 $global:workArray = @()
+$global:global:validSessions$global:validSessions = @()
 
 function Confirm-SessionDateWindow {
     [CmdletBinding()]
@@ -22,27 +23,27 @@ function Confirm-SessionDateWindow {
     
 }
 
-function Get-ValidSessions {
+function Get-global:validSessions$global:validSessions {
     [CmdletBinding()]
     param (
         [Parameter()]
         [String]
         $AuthToken
     )
-    $validSessions = @()
+    $global:validSessions = @()
     Write-Information "Setting up auth header"
     $headers = @{Authorization = "Bearer $AuthToken"}
 
     $gswpSessions = Invoke-RestMethod -uri 'https://training.puppet.com/course/v1/courses/3/sessions' -Headers $headers -Method Get
     Write-Information "gswpSessions:"
-    Write-Information $($gswpSessions.data.items)
+    Write-Information $gswpSessions.data.items 
     #TODO: add endpoints for other course types
     # $pracSessions = Invoke-RestMethod -uri 'https://'
     # workshopSessions = Invoke-RestMethod -uri 'https://'
 
     foreach ($session in $gswpSessions.data.items) {
         if (Confirm-SessionDateWindow([DateTime]$session.date_start)) {
-            $validSessions+=$session
+            $global:validSessions+=$session
         }
         else {
             Write-Information "Session with name: $($session.name) and start date $($session.date_start) not valid for session window"
@@ -51,7 +52,6 @@ function Get-ValidSessions {
     #TODO: add loops for other course types
     # foreach ($session in $pracSessions)
     # foreach ($session in workshopSessions)
-    return $validSessions
 }
 
 function Set-SessionHydraCommitData {
@@ -164,7 +164,7 @@ tf_parameters:
     student_machine_count: '<STUDENTCOUNT>'
 "@
 
-$list = Get-ValidSessions -AuthToken $env:DoceboToken -InformationAction Continue
+Get-ValidSessions -AuthToken $env:DoceboToken -InformationAction Continue
 
 git config --global user.email "eduteam@puppetlabs.com"
 git config --global user.name "puppetlabs-edu-api"
@@ -178,7 +178,7 @@ git clone "https://puppetlabs-edu-api:$($env:GithubPAT)@github.com/puppetlabs/co
 Write-Output "Setting working directory to hydra repo"
 Set-Location courseware-lms-nextgen-hydra
 
-Set-HydraCommits -SessionList $list -InformationAction Continue
+Set-HydraCommits -SessionList $global:validSessions -InformationAction Continue
 
 $global:workArray  | Format-Table -Property name, id, uid_session, HydraBranch, date_start 
 Write-Output "Printing table"
