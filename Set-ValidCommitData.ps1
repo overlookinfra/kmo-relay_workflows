@@ -49,9 +49,7 @@ function Get-ValidSessions {
             Write-Output "Session with name: $($session.name) and start date $($session.date_start) not valid for session window"
         }
     }
-    #TODO: add loops for other course types
-    # foreach ($session in $pracSessions)
-    # foreach ($session in workshopSessions)
+
 }
 
 function Set-HydraCommits {
