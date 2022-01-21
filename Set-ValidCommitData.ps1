@@ -37,15 +37,16 @@ function Get-ValidSessions {
     $gswpSessions = Invoke-RestMethod -uri 'https://training.puppet.com/course/v1/courses/3/sessions' -Headers $headers -Method Get
 
     foreach ($session in $gswpSessions.data.items) {
-        Write-Output "Working on $($session.id) with $($session.date_start)"
-        if (Confirm-SessionDateWindow([DateTime]$session.date_start)) {
-            $global:validSessions+=$session
+        if ($session.date_start) {           
+            Write-Output "Working on $($session.id) with $($session.date_start)"
+            if (Confirm-SessionDateWindow([DateTime]$session.date_start)) {
+                $global:validSessions+=$session
+            }
+            else {
+            Write-Output "Session ID $($session.id) not valid for date window"
+            }
         }
-        else {
-           Write-Output "Session ID $($session.id) not valid for date window"
-        }
-    }
-
+    }    
 }
 
 function Set-HydraCommits {
