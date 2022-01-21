@@ -46,7 +46,7 @@ function Get-ValidSessions {
             $global:validSessions+=$session
         }
         else {
-           Write-Output "Session ID - $(session.ID) not valid for date window"
+           Write-Output "Session ID $(session.id) not valid for date window"
         }
     }
 
