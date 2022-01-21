@@ -35,13 +35,9 @@ function Get-ValidSessions {
     $headers = @{Authorization = "Bearer $AuthToken"}
 
     $gswpSessions = Invoke-RestMethod -uri 'https://training.puppet.com/course/v1/courses/3/sessions' -Headers $headers -Method Get
-    Write-Output "gswpSessions:"
-    Write-Output $gswpSessions.data.items 
-    #TODO: add endpoints for other course types
-    # $pracSessions = Invoke-RestMethod -uri 'https://'
-    # workshopSessions = Invoke-RestMethod -uri 'https://'
 
     foreach ($session in $gswpSessions.data.items) {
+        Write-Output "Working on $(session.id) with $($session.date_start)"
         if (Confirm-SessionDateWindow([DateTime]$session.date_start)) {
             $global:validSessions+=$session
         }
