@@ -1,5 +1,5 @@
 $global:workArray = @()
-$global:global:validSessions$global:validSessions = @()
+$global:validSessions = @()
 
 function Confirm-SessionDateWindow {
     [CmdletBinding()]
