@@ -23,7 +23,7 @@ function Confirm-SessionDateWindow {
     
 }
 
-function Get-global:validSessions$global:validSessions {
+function Get-ValidSessions {
     [CmdletBinding()]
     param (
         [Parameter()]
