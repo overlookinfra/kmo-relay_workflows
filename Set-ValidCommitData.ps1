@@ -31,12 +31,12 @@ function Get-ValidSessions {
         $AuthToken
     )
     $global:validSessions = @()
-    Write-Information "Setting up auth header"
+    Write-Output "Setting up auth header"
     $headers = @{Authorization = "Bearer $AuthToken"}
 
     $gswpSessions = Invoke-RestMethod -uri 'https://training.puppet.com/course/v1/courses/3/sessions' -Headers $headers -Method Get
-    Write-Information "gswpSessions:"
-    Write-Information $gswpSessions.data.items 
+    Write-Output "gswpSessions:"
+    Write-Output $gswpSessions.data.items 
     #TODO: add endpoints for other course types
     # $pracSessions = Invoke-RestMethod -uri 'https://'
     # workshopSessions = Invoke-RestMethod -uri 'https://'
@@ -46,39 +46,12 @@ function Get-ValidSessions {
             $global:validSessions+=$session
         }
         else {
-            Write-Information "Session with name: $($session.name) and start date $($session.date_start) not valid for session window"
+            Write-Output "Session with name: $($session.name) and start date $($session.date_start) not valid for session window"
         }
     }
     #TODO: add loops for other course types
     # foreach ($session in $pracSessions)
     # foreach ($session in workshopSessions)
-}
-
-function Set-SessionHydraCommitData {
-    [CmdletBinding()]
-    param (
-        [Parameter()]
-        [String]
-        $SessionID,
-        [Parameter()]
-        [String]
-        $CommitData,
-        [Parameter()]
-        [String]
-        $AuthToken
-        
-    )
-    $uri = "https://training.puppet.com/course/v1/sessions/$SessionID"
-    Write-Information "Setting up auth header"
-    $headers = @{Authorization = "Bearer $AuthToken"}
-    Write-Information "Attempting to get Session data for Session ID: $SessionID"
-    $sessionData = Invoke-RestMethod -Uri $uri -Headers $headers -Method Get
-    Write-Information "Got Session data for name: $($sessionData.data.name) and ID: $($sessionData.data.id)"
-    Write-Information "Updating session data with hydra commit ID"
-    $sessionData.data.additional_fields[0].value = "$($CommitData)"
-    $body = $sessionData | ConvertTo-Json -Depth 5
-    Invoke-RestMethod -Uri $uri -Headers $headers -Body $body -Method Put
-
 }
 
 function Set-HydraCommits {
@@ -94,17 +67,17 @@ function Set-HydraCommits {
 
     foreach ($session in $SessionList) {
         $branchID = "R2H-$($session.uid_session)"
-        Write-Information "Working on session item $($session.name)"
-        Write-Information "Creating branch: $branchID"
+        Write-Output "Working on session item $($session.name)"
+        Write-Output "Creating branch: $branchID"
         git checkout -b $branchID 
-        Write-Information "Removing manifest.yaml if it exists"
+        Write-Output "Removing manifest.yaml if it exists"
         if (Test-Path manifest.yaml) {
             Remove-Item manifest.yaml
         }
-        Write-Information "Adding manifest template"
+        Write-Output "Adding manifest template"
         $manifestTemplate >> manifest.yaml
         git status 
-        Write-Information "Adjusting manifest file values:"
+        Write-Output "Adjusting manifest file values:"
 
         $classType = switch -Wildcard ($($session.name)) {
             'Getting Started*' {'legacyclass'}
@@ -118,12 +91,6 @@ function Set-HydraCommits {
             'Upgrade*' {''}
         }
 
-<#         $region = switch -Wildcard ($($session.name)) {
-            '*US (East)*' {'us-east-1'}
-            '*US (West)*' {'us-west-2'}
-            '*EU (Central)*' {''}
-        } #>
-
         $region = "us-east-1"
 
         $adjustedSeats = 0 + [Int]$session.enrolled
@@ -133,15 +100,13 @@ function Set-HydraCommits {
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<REGION>', $region) | Set-Content -Path manifest.yaml
 
-        Write-Information "Adjusted manifest.yaml data:"
+        Write-Output "Adjusted manifest.yaml data:"
         $adjustedManifest = Get-Content manifest.yaml -Raw
-        Write-Information $adjustedManifest
+        Write-Output $adjustedManifest
 
         git add --all
         git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.uid_session)"
         git push origin $branchID
-
-        # Set-SessionHydraCommitData -SessionID $($session.id) -AuthToken $env:DoceboToken -CommitData $branchID
 
         $session | Add-Member -MemberType NoteProperty -Name 'HydraBranch' -Value $branchID
 
