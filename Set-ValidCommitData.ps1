@@ -9,7 +9,7 @@ function Confirm-SessionDateWindow {
     )
 
     $currentDate = Get-Date
-    $forecastInterval = New-TimeSpan -Days 150
+    $forecastInterval = New-TimeSpan -Days 10
     $forecastDate = $currentDate + $forecastInterval
 
     if ($Date -ge $currentDate -and $Date -le $forecastDate) {
@@ -118,11 +118,20 @@ function Set-HydraCommits {
             'Upgrade*' {''}
         }
 
+<#         $region = switch -Wildcard ($($session.name)) {
+            '*US (East)*' {'us-east-1'}
+            '*US (West)*' {'us-west-2'}
+            '*EU (Central)*' {''}
+        } #>
+
+        $region = "us-east-1"
+
         $adjustedSeats = 0 + [Int]$session.enrolled
 
         ((Get-Content -path manifest.yaml -Raw) -replace '<CLASSTYPE>', $classType) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<STUDENTCOUNT>', $($adjustedSeats)) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
+        ((Get-Content -path manifest.yaml -Raw) -replace '<REGION>', $region) | Set-Content -Path manifest.yaml
 
         Write-Information "Adjusted manifest.yaml data:"
         $adjustedManifest = Get-Content manifest.yaml -Raw
@@ -147,7 +156,7 @@ stack: <CLASSTYPE>
 tf_action: apply
 owner: puppetlabs-edu-api
 owner_email: eduteam@puppetlabs.com
-region: us-east-1
+region: <REGION>
 days_needed: 7
 department: EDU
 tf_parameters:
