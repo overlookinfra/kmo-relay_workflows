@@ -46,7 +46,7 @@ function Get-ValidSessions {
             $global:validSessions+=$session
         }
         else {
-            Write-Output "Session with name: $($session.name) and start date $($session.date_start) not valid for session window"
+            Write-Output "Session with name: $session.name and start date $session.date_start not valid for session window"
         }
     }
 
