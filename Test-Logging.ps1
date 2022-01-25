@@ -6,4 +6,8 @@ $obj = [PSCustomObject] @{
     Empty = ""
 }
 
-Write-Output "Testing logging $($obj)"
+Write-Output "Testing logging Name: $($obj.Name)"
+
+Write-Output "Testing logging Name: $($obj.NullProp)"
+
+Write-Output "Testing logging Name: $($obj.Empty)"
