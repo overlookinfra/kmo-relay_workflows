@@ -6,4 +6,4 @@ $obj = [PSCustomObject] @{
     Empty = ""
 }
 
-Write-Output "Testing logging $obj"
+Write-Output "Testing logging $($obj)"
