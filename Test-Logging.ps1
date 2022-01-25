@@ -1,6 +1,6 @@
 Write-Output "Standard write output"
 
-$obj = New-[PSCustomObject]@{
+$obj = [PSCustomObject] @{
     Name = "ObjectName"
     NullProp = $null 
     Empty = ""
