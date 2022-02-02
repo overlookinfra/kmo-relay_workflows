@@ -13,7 +13,7 @@ function Confirm-SessionDateWindow {
     )
 
     $currentDate = Get-Date
-    $forecastInterval = New-TimeSpan -Days [Int]$env:FORECAST
+    $forecastInterval = New-TimeSpan -Days $env:FORECAST
     $forecastDate = $currentDate + $forecastInterval
 
     if ($Date -ge $currentDate -and $Date -le $forecastDate) {
@@ -45,7 +45,7 @@ function Get-ValidSessions {
 
     foreach ($session in $combined) {
         if ($session.date_start) {           
-            Write-Output "Working on Sessions ID $($session.id) with Start Date $session.date_start"
+            Write-Output "Working on Sessions ID $($session.id) with Start Date $($session.date_start)"
             if (Confirm-SessionDateWindow([DateTime]$session.date_start)) {
                 $global:validSessions+=$session
             }
