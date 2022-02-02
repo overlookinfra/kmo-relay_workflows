@@ -45,7 +45,7 @@ function Get-ValidSessions {
 
     foreach ($session in $combined) {
         if ($session.date_start) {           
-            Write-Output "Working on $($session.id) with $session.date_start"
+            Write-Output "Working on Sessions ID $($session.id) with Start Date $session.date_start"
             if (Confirm-SessionDateWindow([DateTime]$session.date_start)) {
                 $global:validSessions+=$session
             }
