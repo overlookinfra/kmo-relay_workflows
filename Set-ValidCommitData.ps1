@@ -1,6 +1,9 @@
 $global:workArray = @()
 $global:validSessions = @()
 
+Write-Output "Debug control variable is $env:DEBUG"
+Write-Output "Forecast days interval is $env:FORECAST"
+
 function Confirm-SessionDateWindow {
     [CmdletBinding()]
     param (
@@ -10,7 +13,7 @@ function Confirm-SessionDateWindow {
     )
 
     $currentDate = Get-Date
-    $forecastInterval = New-TimeSpan -Days 10
+    $forecastInterval = New-TimeSpan -Days [Int]$env:FORECAST
     $forecastDate = $currentDate + $forecastInterval
 
     if ($Date -ge $currentDate -and $Date -le $forecastDate) {
@@ -35,8 +38,12 @@ function Get-ValidSessions {
     $headers = @{Authorization = "Bearer $AuthToken"}
 
     $gswpSessions = Invoke-RestMethod -uri 'https://training.puppet.com/course/v1/courses/3/sessions' -Headers $headers -Method Get
+    $pracSessions = Invoke-RestMethod -uri 'https://training.puppet.com/course/v1/courses/31/sessions' -Headers $headers -Method Get
+    $wkshpSessions = Invoke-RestMethod -uri 'https://training.puppet.com/course/v1/courses/32/sessions' -Headers $headers -Method Get
 
-    foreach ($session in $gswpSessions.data.items) {
+    $combined = $gswpSessions.data.items + $pracSessions.data.items + $wkshpSessions.data.items 
+
+    foreach ($session in $combined) {
         if ($session.date_start) {           
             Write-Output "Working on $($session.id) with $($session.date_start)"
             if (Confirm-SessionDateWindow([DateTime]$session.date_start)) {
@@ -86,12 +93,18 @@ function Set-HydraCommits {
             'Upgrade*' {''}
         }
 
-        $region = "us-east-1"
+        $region = switch -Wildcard ($($session.name)) {
+            '*APAC*' {'ap-southeast-1'}
+            '*EMEA*' {'eu-central-1'}
+            '*US (East)*' {'us-east-1'}
+            '*US (West)*' {'us-west-2'}
+            Default {'us-east-1'}
+        }
 
         $adjustedSeats = 0 + [Int]$session.enrolled
 
         ((Get-Content -path manifest.yaml -Raw) -replace '<CLASSTYPE>', $classType) | Set-Content -Path manifest.yaml
-        ((Get-Content -path manifest.yaml -Raw) -replace '<STUDENTCOUNT>', $($adjustedSeats)) | Set-Content -Path manifest.yaml
+        ((Get-Content -path manifest.yaml -Raw) -replace '<STUDENTCOUNT>', $adjustedSeats) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<REGION>', $region) | Set-Content -Path manifest.yaml
 
@@ -99,9 +112,12 @@ function Set-HydraCommits {
         $adjustedManifest = Get-Content manifest.yaml -Raw
         Write-Output $adjustedManifest
 
-        git add --all
-        git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.uid_session)"
-        git push origin $branchID
+        if ($env:DEBUG -ne "noop") {
+            Write-Output "DEBUG control not set to noop - entering git add and commit block"
+            git add --all
+            git commit -m "Provision environment from Relay: session id: $($session.id) uid: $($session.uid_session)"
+            git push origin $branchID
+        } 
 
         $session | Add-Member -MemberType NoteProperty -Name 'HydraBranch' -Value $branchID
 
