@@ -130,8 +130,8 @@ $manifestTemplate = @"
 ---
 stack: <CLASSTYPE>
 tf_action: apply
-owner: puppetlabs-edu-api
-owner_email: eduteam@puppetlabs.com
+owner: Alex Williamson
+owner_email: alex.williamson@puppet.com
 region: <REGION>
 days_needed: 7
 department: EDU
