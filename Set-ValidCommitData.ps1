@@ -172,7 +172,7 @@ git clone "https://puppetlabs-edu-api:$($env:GithubPAT)@github.com/puppetlabs/co
 Write-Output "Setting working directory to hydra repo"
 Set-Location courseware-lms-nextgen-hydra
 
-Set-HydraCommits -SessionList $global:validSessions 
+Set-HydraCommits -SessionList $global:validSessions -AuthToken $env:DoceboToken
 
 $global:workArray  | Format-Table -Property name, id, uid_session, HydraBranch, date_start 
 Write-Output "Printing table"
