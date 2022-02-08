@@ -113,7 +113,7 @@ function Set-HydraCommits {
             Default {'us-east-1'}
         }
 
-        $adjustedSeats = $env:SEATS
+        $adjustedSeats = $($env:SEATS)
 
         ((Get-Content -path manifest.yaml -Raw) -replace '<CLASSTYPE>', $classType) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<STUDENTCOUNT>', $adjustedSeats) | Set-Content -Path manifest.yaml
