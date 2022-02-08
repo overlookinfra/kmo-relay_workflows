@@ -119,8 +119,8 @@ function Set-HydraCommits {
         ((Get-Content -path manifest.yaml -Raw) -replace '<STUDENTCOUNT>', $adjustedSeats) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<REGION>', $region) | Set-Content -Path manifest.yaml
-        ((Get-Content -path manifest.yaml -Raw) -replace '<NAME>', $sessionData.data.instructors.firstname + " " + $sessionData.data.instructors.lastname) | Set-Content -Path manifest.yaml
-        ((Get-Content -path manifest.yaml -Raw) -replace '<EMAIL>', $sessionData.data.instructors.username) | Set-Content -Path manifest.yaml
+        ((Get-Content -path manifest.yaml -Raw) -replace '<NAME>', $($sessionData.data.instructors.firstname) + " " + $($sessionData.data.instructors.lastname)) | Set-Content -Path manifest.yaml
+        ((Get-Content -path manifest.yaml -Raw) -replace '<EMAIL>', $($sessionData.data.instructors.username)) | Set-Content -Path manifest.yaml
 
 
         Write-Output "Adjusted manifest.yaml data:"
