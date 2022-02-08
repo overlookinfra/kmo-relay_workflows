@@ -3,6 +3,7 @@ $global:validSessions = @()
 
 Write-Output "Debug control variable is $env:DEBUG"
 Write-Output "Forecast days interval is $env:FORECAST"
+Write-Output "Seats setting is: $($env:SEATS)"
 
 function Confirm-SessionDateWindow {
     [CmdletBinding()]
@@ -33,7 +34,7 @@ function Get-ValidSessions {
         [String]
         $AuthToken
     )
-    $global:validSessions = @()
+
     Write-Output "Setting up auth header"
     $headers = @{Authorization = "Bearer $AuthToken"}
 
@@ -64,8 +65,13 @@ function Set-HydraCommits {
         $SessionList,
         [Parameter()]
         [String]
-        $GithubPAT
+        $GithubPAT,
+        [Parameter()]
+        [String]
+        $AuthToken
     )
+    Write-Output "Setting up auth header for session data"
+    $headers = @{Authorization = "Bearer $AuthToken"}
 
     foreach ($session in $SessionList) {
         $branchID = "R2H-$($session.uid_session)"
@@ -80,6 +86,15 @@ function Set-HydraCommits {
         $manifestTemplate >> manifest.yaml
         git status 
         Write-Output "Adjusting manifest file values:"
+
+        Write-Output "Getting session data to lookup instructor name and email"
+
+        $sessionData = Invoke-RestMethod -Method Get -Uri "https://training.puppet.com/course/v1/sessions/$($session.id)" -Headers $headers
+
+        Write-Output "Instructor data: "
+        $($sessionData.data.instructors.firstname)
+        $($sessionData.data.instructors.lastname)
+        $($sessionData.data.instructors.username)
 
         $classType = switch -Wildcard ($($session.name)) {
             'Getting Started*' {'legacyclass'}
@@ -101,12 +116,15 @@ function Set-HydraCommits {
             Default {'us-east-1'}
         }
 
-        $adjustedSeats = 0 + [Int]$session.enrolled
+        $adjustedSeats = $env:SEATS
 
         ((Get-Content -path manifest.yaml -Raw) -replace '<CLASSTYPE>', $classType) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<STUDENTCOUNT>', $adjustedSeats) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<REGION>', $region) | Set-Content -Path manifest.yaml
+        ((Get-Content -path manifest.yaml -Raw) -replace '<NAME', $sessionData.data.instructors.firstname + " " + $sessionData.data.instructors.lastname) | Set-Content -Path manifest.yaml
+        ((Get-Content -path manifest.yaml -Raw) -replace '<EMAIL>', $sessionData.data.instructors.username) | Set-Content -Path manifest.yaml
+
 
         Write-Output "Adjusted manifest.yaml data:"
         $adjustedManifest = Get-Content manifest.yaml -Raw
@@ -130,10 +148,10 @@ $manifestTemplate = @"
 ---
 stack: <CLASSTYPE>
 tf_action: apply
-owner: Alex Williamson
-owner_email: alex.williamson@puppet.com
+owner: <NAME>
+owner_email: <EMAIL>
 region: <REGION>
-days_needed: 7
+days_needed: 12
 department: EDU
 tf_parameters:
     <LEGACY_CLASS_ID>
