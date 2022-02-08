@@ -113,13 +113,18 @@ function Set-HydraCommits {
             Default {'us-east-1'}
         }
 
+        Write-Output "Seats"
+
         $adjustedSeats = $($env:SEATS)
 
+        Write-Output "File manip"
         ((Get-Content -path manifest.yaml -Raw) -replace '<CLASSTYPE>', $classType) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<STUDENTCOUNT>', $adjustedSeats) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<LEGACY_CLASS_ID>', $legacyClass) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<REGION>', $region) | Set-Content -Path manifest.yaml
+        Write-Output "Instructor name concat"
         ((Get-Content -path manifest.yaml -Raw) -replace '<NAME>', $($sessionData.data.instructors.firstname) + " " + $($sessionData.data.instructors.lastname)) | Set-Content -Path manifest.yaml
+        Write-Output "Email"
         ((Get-Content -path manifest.yaml -Raw) -replace '<EMAIL>', $($sessionData.data.instructors.username)) | Set-Content -Path manifest.yaml
 
 
