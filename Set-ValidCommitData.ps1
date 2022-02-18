@@ -75,6 +75,7 @@ function Set-HydraCommits {
 
     foreach ($session in $SessionList) {
         $branchID = "R2H-$($session.uid_session)"
+        $branchID = $branchID.ToLower()
         Write-Output "Working on session item $($session.name)"
         Write-Output "Creating branch: $branchID"
         git checkout -b $branchID 
