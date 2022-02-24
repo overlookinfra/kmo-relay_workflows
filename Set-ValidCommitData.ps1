@@ -92,7 +92,8 @@ function Set-HydraCommits {
 
         $sessionData = Invoke-RestMethod -Method Get -Uri "https://training.puppet.com/course/v1/sessions/$($session.id)" -Headers $headers
 
-        Write-Output "Instructor data: $($sessionData.data.instructors[0].firstname) $($sessionData.data.instructors[0].lastname)  $($sessionData.data.instructors[0].username)"
+        Write-Output "Instructor data: $(sessionData.data.instructors)"
+        Write-Output "First instructor in array to be used: $($sessionData.data.instructors[0].firstname) $($sessionData.data.instructors[0].lastname)  $($sessionData.data.instructors[0].username)"
 
         $classType = switch -Wildcard ($($session.name)) {
             'Getting Started*' {'legacyclass'}
@@ -117,7 +118,7 @@ function Set-HydraCommits {
         Write-Output "Seats"
 
         $adjustedSeats = $($env:SEATS)
-        $fullName = $($sessionData.data.instructors.firstname) + " " + $($sessionData.data.instructors.lastname)
+        $fullName = $($sessionData.data.instructors[0].firstname) + " " + $($sessionData.data.instructors[0].lastname)
         Write-Output "File manip"
         ((Get-Content -path manifest.yaml -Raw) -replace '<CLASSTYPE>', $classType) | Set-Content -Path manifest.yaml
         ((Get-Content -path manifest.yaml -Raw) -replace '<STUDENTCOUNT>', $adjustedSeats) | Set-Content -Path manifest.yaml
@@ -126,7 +127,7 @@ function Set-HydraCommits {
         Write-Output "Instructor name concat"
         ((Get-Content -path manifest.yaml -Raw) -replace '<NAME>', $fullName) | Set-Content -Path manifest.yaml
         Write-Output "Email"
-        ((Get-Content -path manifest.yaml -Raw) -replace '<EMAIL>', $($sessionData.data.instructors.username)) | Set-Content -Path manifest.yaml
+        ((Get-Content -path manifest.yaml -Raw) -replace '<EMAIL>', $($sessionData.data.instructors[0].username)) | Set-Content -Path manifest.yaml
 
 
         Write-Output "Adjusted manifest.yaml data:"
