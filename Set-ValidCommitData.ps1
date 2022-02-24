@@ -92,7 +92,7 @@ function Set-HydraCommits {
 
         $sessionData = Invoke-RestMethod -Method Get -Uri "https://training.puppet.com/course/v1/sessions/$($session.id)" -Headers $headers
 
-        Write-Output "Instructor data: $($sessionData.data.instructors)"
+        Write-Output "Instructor data: $($sessionData.data.instructors | Out-String)"
         Write-Output "First instructor in array to be used: $($sessionData.data.instructors[0].firstname) $($sessionData.data.instructors[0].lastname)  $($sessionData.data.instructors[0].username)"
 
         $classType = switch -Wildcard ($($session.name)) {
