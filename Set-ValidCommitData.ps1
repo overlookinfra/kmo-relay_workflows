@@ -1,5 +1,6 @@
 $global:workArray = @()
 $global:validSessions = @()
+$global:validCourses = @()
 
 Write-Output "Debug control variable is $env:DEBUG"
 Write-Output "Forecast days interval is $env:FORECAST"
@@ -27,6 +28,27 @@ function Confirm-SessionDateWindow {
     
 }
 
+function Get-ValidCourses {
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        [String]
+        $AuthToken
+    )
+    Write-Output "Setting up auth header for get all courses"
+    $headers = @{Authorization = "Bearer $AuthToken"}
+
+    $allCourses = Invoke-RestMethod -Uri 'https://training.puppet.com/course/v1/courses?page_size=5000' -Method GET -Headers $headers
+    Write-Output "Retrived a total of $($allCourses.data.items.Count) courses"
+
+    foreach ($course in $allCourses.data.items) {
+        if (($course.code -like "*GSWP*") -or ($course.code -like "*PRAC*") -or ($course.code -like "*Workshop*")) {
+            Write-Output "Adding course with code $($course.code) to valide course array"
+            $global:validCourses+=$course
+        }
+    }
+}
+
 function Get-ValidSessions {
     [CmdletBinding()]
     param (
@@ -38,11 +60,12 @@ function Get-ValidSessions {
     Write-Output "Setting up auth header"
     $headers = @{Authorization = "Bearer $AuthToken"}
 
-    $gswpSessions = Invoke-RestMethod -uri 'https://training.puppet.com/course/v1/courses/3/sessions' -Headers $headers -Method Get
-    $pracSessions = Invoke-RestMethod -uri 'https://training.puppet.com/course/v1/courses/31/sessions' -Headers $headers -Method Get
-    $wkshpSessions = Invoke-RestMethod -uri 'https://training.puppet.com/course/v1/courses/32/sessions' -Headers $headers -Method Get
-
-    $combined = $gswpSessions.data.items + $pracSessions.data.items + $wkshpSessions.data.items 
+    foreach ($course in $global:validCourses) {
+        Write-Output "Adding sessions for course $($course.name) to combined session list for pruning"
+        $courseSessions = Invoke-RestMethod -uri "https://training.puppet.com/course/v1/courses/$($course.id)/sessions?page_size=5000" -Headers $headers -Method Get
+        Write-Output "Got $($courseSessions.data.items.Count) for course - adding to array"
+        $combined+=$courseSessions
+    }
 
     foreach ($session in $combined) {
         if ($session.date_start) {           
@@ -161,7 +184,10 @@ tf_parameters:
     <LEGACY_CLASS_ID>
     student_machine_count: '<STUDENTCOUNT>'
 "@
+Write-Output "Getting all courses"
+Get-ValidCourses -AuthToken $env:DoceboToken
 
+Write-Output "Getting all valid sessions for valid courses"
 Get-ValidSessions -AuthToken $env:DoceboToken 
 
 git config --global user.email "eduteam@puppetlabs.com"
