@@ -75,8 +75,11 @@ function Get-ValidSessions {
                 $global:validSessions+=$session
             }
             else {
-            Write-Output "Session ID $($session.id) not valid for date window"
+                Write-Output "Session ID $($session.id) not valid for date window"
             }
+        else {
+            Write-Output "Session ID $($session.id) has no start date - skipping"
+        }
         }
     }    
 }
