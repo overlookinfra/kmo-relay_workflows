@@ -80,9 +80,9 @@ function Get-ValidSessions {
                 Write-Output "Session ID $($session.id) not valid for date window"
             }
 
-        else {
+        elseif !($session.date_start) {
             Write-Output "Session ID $($session.id) has no start date - skipping"
-        }
+            }
         }
     }    
 }
