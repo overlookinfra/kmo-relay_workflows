@@ -137,6 +137,7 @@ function Set-HydraCommits {
 
         $region = switch -Wildcard ($($session.name)) {
             '*APAC*' {'ap-southeast-1'}
+            '*Australia*' {'ap-southeast-1'}
             '*EMEA*' {'eu-central-1'}
             '*US (East)*' {'us-east-1'}
             '*US (West)*' {'us-west-2'}
