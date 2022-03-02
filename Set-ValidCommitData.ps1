@@ -39,11 +39,11 @@ function Get-ValidCourses {
     $headers = @{Authorization = "Bearer $AuthToken"}
 
     $allCourses = Invoke-RestMethod -Uri 'https://training.puppet.com/course/v1/courses?page_size=5000' -Method GET -Headers $headers
-    Write-Output "Retrived a total of $($allCourses.data.items.Count) courses"
+    Write-Output "Retrieved a total of $($allCourses.data.items.Count) courses"
 
     foreach ($course in $allCourses.data.items) {
         if (($course.code -like "*GSWP*") -or ($course.code -like "*PRAC*") -or ($course.code -like "*Workshop*")) {
-            Write-Output "Adding course with code $($course.code) to valide course array"
+            Write-Output "Adding course with code $($course.code) to valid course array"
             $global:validCourses+=$course
         }
     }
@@ -59,11 +59,12 @@ function Get-ValidSessions {
 
     Write-Output "Setting up auth header"
     $headers = @{Authorization = "Bearer $AuthToken"}
+    $combined = @()
 
     foreach ($course in $global:validCourses) {
         Write-Output "Adding sessions for course $($course.name) to combined session list for pruning"
         $courseSessions = Invoke-RestMethod -uri "https://training.puppet.com/course/v1/courses/$($course.id)/sessions?page_size=5000" -Headers $headers -Method Get
-        Write-Output "Got $($courseSessions.data.items.Count) for course - adding to array"
+        Write-Output "Got $($courseSessions.data.items.Count) sessions for course - adding to array"
         $combined+=$courseSessions
     }
 
