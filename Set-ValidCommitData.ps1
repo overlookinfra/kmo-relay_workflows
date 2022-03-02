@@ -65,7 +65,7 @@ function Get-ValidSessions {
         Write-Output "Adding sessions for course $($course.name) to combined session list for pruning"
         $courseSessions = Invoke-RestMethod -uri "https://training.puppet.com/course/v1/courses/$($course.id)/sessions?page_size=5000" -Headers $headers -Method Get
         Write-Output "Got $($courseSessions.data.items.Count) sessions for course - adding to array"
-        $combined+=$courseSessions
+        $combined+=$courseSessions.data.items
     }
 
     foreach ($session in $combined) {
