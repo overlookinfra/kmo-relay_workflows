@@ -126,7 +126,7 @@ function Set-HydraCommits {
         $classType = switch -Wildcard ($($session.name)) {
             'Getting Started*' {'legacyclass'}
             'Puppet Practitioner*' {'legacyclass'}
-            'Upgrade*' {'peupgradeworkshop'}
+            '*Upgrade*' {'peupgradeworkshop'}
         }
 
         $legacyClass = switch -Wildcard ($($session.name)) {
