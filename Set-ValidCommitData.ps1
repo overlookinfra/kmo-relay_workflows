@@ -158,6 +158,10 @@ function Set-HydraCommits {
         Write-Output "Email"
         ((Get-Content -path manifest.yaml -Raw) -replace '<EMAIL>', $($sessionData.data.instructors[0].username)) | Set-Content -Path manifest.yaml
 
+        if ($classType -eq 'peupgradeworkshop') {
+            ((Get-Content -path manifest.yaml -Raw) -replace 'student_machine_count:', 'machine_count:') | Set-Content -Path manifest.yaml
+        }
+
 
         Write-Output "Adjusted manifest.yaml data:"
         $adjustedManifest = Get-Content manifest.yaml -Raw
