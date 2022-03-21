@@ -102,10 +102,21 @@ function Set-HydraCommits {
     $headers = @{Authorization = "Bearer $AuthToken"}
 
     foreach ($session in $SessionList) {
-        $branchID = "R2H-$($session.uid_session)"
+        # handle workshop as static branch name for upgrade workshop
+        $branchID = switch -Wildcard ($($session.name)) {
+            '*Upgrade*' {'workshop'}
+            Default {"R2H-$($session.uid_session)"}
+        }
+ 
         $branchID = $branchID.ToLower()
         Write-Output "Working on session item $($session.name)"
         Write-Output "Creating branch: $branchID"
+        Write-Output "Checking if branch previously existed in remote repo"
+        $branches = (git branch -r | foreach {$_ -replace '  origin/',''})
+        if ($branches.Contains($branchID)) {
+            Write-Output "$branchID exists in remote repo from a previous creation attempt; skipping"
+            {continue}
+        }
         git checkout -b $branchID 
         Write-Output "Removing manifest.yaml if it exists"
         if (Test-Path manifest.yaml) {
