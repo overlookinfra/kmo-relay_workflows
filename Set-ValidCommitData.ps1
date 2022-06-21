@@ -23,7 +23,7 @@ function Confirm-SessionDateWindow {
     }
 
     $forecastInterval = New-TimeSpan -Days $env:FORECAST
-    $forecastDate = $currentDate + $forecastInterval
+    $forecastDate = $start_date + $forecastInterval
 
     if ($Date -ge $start_date -and $Date -le $forecastDate) {
         return $true
