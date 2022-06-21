@@ -5,6 +5,7 @@ $global:validCourses = @()
 Write-Output "Debug control variable is $env:DEBUG"
 Write-Output "Forecast days interval is $env:FORECAST"
 Write-Output "Seats setting is: $($env:SEATS)"
+Write-Output "Start date setting is: $($env:START_DATE)"
 
 function Confirm-SessionDateWindow {
     [CmdletBinding()]
@@ -14,11 +15,17 @@ function Confirm-SessionDateWindow {
         $Date
     )
 
-    $currentDate = Get-Date
+    if ($env:START_DATE -ne "TODAY") {
+        $start_date = $env:START_DATE
+    }
+    else {
+        $start_date = Get-Date
+    }
+
     $forecastInterval = New-TimeSpan -Days $env:FORECAST
     $forecastDate = $currentDate + $forecastInterval
 
-    if ($Date -ge $currentDate -and $Date -le $forecastDate) {
+    if ($Date -ge $start_date -and $Date -le $forecastDate) {
         return $true
     }
 
