@@ -16,7 +16,7 @@ function Confirm-SessionDateWindow {
     )
 
     if ($env:START_DATE -ne "TODAY") {
-        $start_date = $env:START_DATE
+        [DateTime]$start_date = $env:START_DATE
     }
     else {
         $start_date = Get-Date
