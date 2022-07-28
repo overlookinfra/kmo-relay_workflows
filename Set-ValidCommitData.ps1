@@ -159,7 +159,7 @@ function Set-HydraCommits {
             '*EMEA*' {'eu-central-1'}
             '*US (East)*' {'us-east-1'}
             '*US (West)*' {'us-west-2'}
-            Default {'us-east-1'}
+            Default {'us-west-2'}
         }
 
         Write-Output "Seats"
